@@ -1,7 +1,7 @@
 import { Image } from "./model/Image";
 import { connect } from "mongoose";
 import { config } from "./config";
-import { mjClient, receiveMessage, deleteMessage } from "./util";
+import { mjClient, sendMessage, receiveMessage, deleteMessage } from "./util";
 
 async function generate(data: any) {
   const user_id = data?.user_id;
@@ -9,19 +9,20 @@ async function generate(data: any) {
   const prompt = data?.prompt;
 
   // call to discord
-  const result = await mjClient.Imagine(prompt);
   console.log(`${data} is imaging`);
-  // save to mongo
-  const now = new Date().getTime();
-  const image = new Image({
+  const result = await mjClient.Imagine(prompt);
+  // done
+  const imageData = {
+    action: "generate_done",
     user_id,
     prompt_id,
     image_src: result?.uri,
-    create_time: now,
-    update_time: now,
-  });
-  await image.save();
-  console.log(`${data} is insert to mongo`);
+    prompt,
+  };
+  sendMessage(JSON.stringify(imageData));
+  // const image = new Image(imageData);
+  // await image.save();
+  // console.log(`${data} is insert to mongo`);
 }
 
 async function main() {
@@ -34,8 +35,9 @@ async function main() {
     const { Messages } = await receiveMessage();
     if (Messages) {
       Messages.forEach(async (message: any) => {
-        await deleteMessage(message);
         const data = JSON.parse(message?.Body);
+        if (data?.action !== "generate") return;
+        await deleteMessage(message);
         await generate(data);
       });
     }

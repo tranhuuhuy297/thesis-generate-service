@@ -14,10 +14,12 @@ async function generate(data: any) {
   const user_id = data?.user_id;
   const prompt_id = data?.prompt_id;
   const prompt = data?.prompt;
+  if (!user_id || !prompt_id || !prompt) return;
 
   // call to discord
   console.log(`${data} is imaging`);
   const result = await mjClient.Imagine(prompt);
+  if (!result) return;
   // done
   const imageData = {
     action: "generate_done",

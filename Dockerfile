@@ -7,4 +7,4 @@ RUN yarn install
 
 COPY . ./
 
-CMD ["ts-node", "src/run.ts"]
+CMD ["npx", "ts-node", "src/run.ts"]

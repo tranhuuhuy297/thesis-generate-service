@@ -5,8 +5,15 @@ import {
   ReceiveMessageCommand,
   DeleteMessageCommand,
 } from "@aws-sdk/client-sqs";
+import { config } from "../config";
 
-export const sqsClient = new SQSClient({ region: "ap-southeast-1" });
+export const sqsClient = new SQSClient({
+  region: "ap-southeast-1",
+  credentials: {
+    accessKeyId: config.aws.access_key_id,
+    secretAccessKey: config.aws.secret_access_key,
+  },
+});
 
 const SQS_QUEUE_NAME = process.env.AWS_SQS_NAME || "";
 export const SQS_QUEUE_GENERATE = process.env.AWS_SQS_GENERATE || "";

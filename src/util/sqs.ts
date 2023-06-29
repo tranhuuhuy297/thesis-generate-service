@@ -15,15 +15,8 @@ export const sqsClient = new SQSClient({
   },
 });
 
-const SQS_QUEUE_NAME = process.env.AWS_SQS_NAME || "";
 export const SQS_QUEUE_GENERATE = process.env.AWS_SQS_GENERATE || "";
 export const SQS_QUEUE_PINECONE = process.env.AWS_SQS_PINECONE || "";
-
-export const getQueueURL = async (queueName = SQS_QUEUE_NAME) => {
-  const command = new GetQueueUrlCommand({ QueueName: queueName });
-  const response = await sqsClient.send(command);
-  return response;
-};
 
 export const sendMessage = async (queueURL: any, message: any) => {
   const command = new SendMessageCommand({

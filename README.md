@@ -1,4 +1,4 @@
-# Thesis-FE-service
+# Thesis-generate-service
 ```
 docker build -t thesis-generate-service .
 ```

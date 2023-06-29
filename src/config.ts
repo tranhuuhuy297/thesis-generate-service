@@ -13,5 +13,7 @@ export const config = {
   aws: {
     access_key_id: process.env.AWS_ACCESS_KEY_ID || "",
     secret_access_key: process.env.AWS_SECRET_ACCESS_KEY || "",
+    sqs_queue_generate: process.env.AWS_SQS_GENERATE || "",
+    sqs_queue_pinecone: process.env.AWS_SQS_PINECONE || "",
   },
 };

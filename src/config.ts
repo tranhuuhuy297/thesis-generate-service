@@ -16,4 +16,7 @@ export const config = {
     sqs_queue_generate: process.env.AWS_SQS_GENERATE || "",
     sqs_queue_pinecone: process.env.AWS_SQS_PINECONE || "",
   },
+  endpoint: {
+    url: process.env.URL || "http://127.0.0.1:5001",
+  },
 };

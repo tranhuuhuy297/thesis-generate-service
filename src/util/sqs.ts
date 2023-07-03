@@ -1,7 +1,5 @@
 import {
   SQSClient,
-  GetQueueUrlCommand,
-  SendMessageCommand,
   ReceiveMessageCommand,
   DeleteMessageCommand,
 } from "@aws-sdk/client-sqs";
@@ -16,18 +14,6 @@ export const sqsClient = new SQSClient({
 });
 
 export const SQS_QUEUE_GENERATE = process.env.AWS_SQS_GENERATE || "";
-export const SQS_QUEUE_PINECONE = process.env.AWS_SQS_PINECONE || "";
-
-export const sendMessage = async (queueURL: any, message: any) => {
-  const command = new SendMessageCommand({
-    QueueUrl: queueURL,
-    MessageBody: message,
-  });
-
-  const response = await sqsClient.send(command);
-  console.log(response);
-  return response;
-};
 
 export const receiveMessage = (queue_URL: any) => {
   console.log("receive message");

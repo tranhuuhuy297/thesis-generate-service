@@ -8,6 +8,8 @@ interface Body {
 }
 
 function createImage(body: Body): Promise<void> {
+  console.log(`${JSON.stringify(body)}`);
+
   const headers: Headers = new Headers();
   headers.set("Content-Type", "application/json");
   headers.set("Accept", "application/json");
@@ -33,19 +35,30 @@ async function generate(data: any) {
   if (!user_id || !prompt) return;
 
   // call to discord
-  const result = await mjClient.Imagine(prompt);
-  if (!result) return false;
-  console.log(
-    `${JSON.stringify({
+  const Image = await mjClient.Imagine(prompt);
+  if (!Image) return false;
+
+  // Upscale
+  const Upscale = await mjClient.Upscale({
+    index: 1,
+    msgId: <string>Image.id,
+    hash: <string>Image.hash,
+    flags: Image.flags,
+  });
+
+  if (!Upscale) {
+    await createImage({
       user_id,
       prompt,
-      image_src: result?.uri,
-    })}`
-  );
+      image_src: Image?.uri,
+    });
+    return false;
+  }
+
   await createImage({
     user_id,
     prompt,
-    image_src: result?.uri,
+    image_src: Upscale?.uri,
   });
 }
 

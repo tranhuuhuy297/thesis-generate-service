@@ -1,6 +1,30 @@
-import { connect } from "mongoose";
 import { config } from "./config";
 import { mjClient, receiveMessage, deleteMessage } from "./util";
+
+interface Body {
+  user_id: string;
+  prompt: string;
+  image_src: string;
+}
+
+function createImage(body: Body): Promise<void> {
+  const headers: Headers = new Headers();
+  headers.set("Content-Type", "application/json");
+  headers.set("Accept", "application/json");
+
+  const request: RequestInfo = new Request(
+    `${config.endpoint.url}/api/upsert_after_generate`,
+    {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(body),
+    }
+  );
+
+  return fetch(request).then((res) => {
+    console.log("got response:", res);
+  });
+}
 
 async function generate(data: any) {
   console.log(`generate ${JSON.stringify(data)}`);
@@ -18,25 +42,14 @@ async function generate(data: any) {
       image_src: result?.uri,
     })}`
   );
-  fetch(`${config.endpoint.url}/api/upsert_after_generate`, {
-    method: "POST",
-    body: JSON.stringify({
-      user_id,
-      prompt,
-      image_src: result?.uri,
-    }),
-  })
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
+  await createImage({
+    user_id,
+    prompt,
+    image_src: result?.uri,
+  });
 }
 
 async function main() {
-  await connect(config.mongo.url);
-  console.log("connected mongo");
   await mjClient.Connect();
   console.log("connected midjourney");
 
@@ -47,7 +60,7 @@ async function main() {
       Messages.forEach(async (message: any) => {
         const data = JSON.parse(message?.Body);
         deleteMessage(config.aws.sqs_queue_generate, message);
-        generate(data);
+        await generate(data);
       });
     }
   }

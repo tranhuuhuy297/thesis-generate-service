@@ -3,24 +3,26 @@ import { config } from "./config";
 import { mjClient, receiveMessage, deleteMessage } from "./util";
 
 async function generate(data: any) {
+  console.log(`generate ${JSON.stringify(data)}`);
   const user_id = data?.user_id;
-  const prompt_id = data?.prompt_id;
   const prompt = data?.prompt;
-  if (!user_id || !prompt_id || !prompt) return;
+  if (!user_id || !prompt) return;
 
   // call to discord
-  console.log(`${prompt} is imaging`);
   const result = await mjClient.Imagine(prompt);
   if (!result) return false;
+  console.log(
+    `${JSON.stringify({
+      user_id,
+      prompt,
+      image_src: result?.uri,
+    })}`
+  );
   fetch(`${config.endpoint.url}/api/upsert_after_generate`, {
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       user_id,
-      prompt_id,
+      prompt,
       image_src: result?.uri,
     }),
   })
@@ -44,8 +46,8 @@ async function main() {
     if (Messages) {
       Messages.forEach(async (message: any) => {
         const data = JSON.parse(message?.Body);
-        await deleteMessage(config.aws.sqs_queue_generate, message);
-        await generate(data);
+        deleteMessage(config.aws.sqs_queue_generate, message);
+        generate(data);
       });
     }
   }

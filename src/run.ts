@@ -35,15 +35,20 @@ async function generate(data: any) {
   if (!user_id || !prompt) return;
 
   // call to discord
-  const Image = await mjClient.Imagine(prompt);
+  let Image = null;
+  try {
+    Image = await mjClient.Imagine(prompt);
+  } catch (error) {
+    console.log(error);
+  }
   if (!Image) return false;
 
   // Upscale
   const Upscale = await mjClient.Upscale({
     index: 1,
-    msgId: <string>Image.id,
-    hash: <string>Image.hash,
-    flags: Image.flags,
+    msgId: <string>Image?.id,
+    hash: <string>Image?.hash,
+    flags: Image?.flags,
   });
 
   if (!Upscale) {

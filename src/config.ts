@@ -14,7 +14,6 @@ export const config = {
     access_key_id: process.env.AWS_ACCESS_KEY_ID || "",
     secret_access_key: process.env.AWS_SECRET_ACCESS_KEY || "",
     sqs_queue_generate: process.env.AWS_SQS_GENERATE || "",
-    sqs_queue_pinecone: process.env.AWS_SQS_PINECONE || "",
   },
   endpoint: {
     url: process.env.URL || "http://127.0.0.1:5001",

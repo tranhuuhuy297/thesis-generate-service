@@ -43,27 +43,10 @@ async function generate(data: any) {
   }
   if (!Image) return false;
 
-  // Upscale
-  const Upscale = await mjClient.Upscale({
-    index: 1,
-    msgId: <string>Image?.id,
-    hash: <string>Image?.hash,
-    flags: Image?.flags,
-  });
-
-  if (!Upscale) {
-    await createImage({
-      user_id,
-      prompt,
-      image_src: Image?.uri,
-    });
-    return false;
-  }
-
   await createImage({
     user_id,
     prompt,
-    image_src: Upscale?.uri,
+    image_src: Image?.uri,
   });
 }
 

@@ -3,5 +3,5 @@
 docker build -t thesis-generate-service .
 ```
 ```
-docker run -d thesis-generate-service
+docker run --restart unless-stopped -d thesis-generate-service
 ```
